@@ -1,0 +1,5 @@
+*.zip
+HalalFX/client/bin/
+**/ffmpeg.exe
+node_modules/
+__pycache__/

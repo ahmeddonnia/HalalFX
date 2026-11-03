@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>HalalFX</title>
+<style>
+  :root{
+    --bg:#1D1D1D;
+    --panel:#252525;
+    --border:#121313;
+    --text:#E0E0E0;
+    --muted:#999999;
+    --hover:#333333;
+    --accent-1:#1e9fd6;
+    --accent-2:#0d6fa8;
+    --accent-grad:linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    --selected-text:#ffffff;
+  }
+
+
+  @font-face { font-family:"Poppins"; src:url('fonts/Poppins-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; }
+  @font-face { font-family:"Poppins"; src:url('fonts/Poppins-Medium.ttf') format('truetype'); font-weight:500; font-style:normal; }
+  @font-face { font-family:"Poppins"; src:url('fonts/Poppins-SemiBold.ttf') format('truetype'); font-weight:600; font-style:normal; }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Poppins","Segoe UI Semibold","Segoe UI",Tahoma,sans-serif;
+    font-weight:500;
+    font-size:12px;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  svg{ display:block; }
+
+  /* ---------- icon system ---------- */
+  .icon-mask{
+    display:inline-block;
+    flex-shrink:0;
+    background-color:currentColor;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:center; mask-position:center;
+    -webkit-mask-size:contain; mask-size:contain;
+  }
+  .ic-arrow{ width:10px; height:10px; -webkit-mask-image:url('icons/arrow.svg'); mask-image:url('icons/arrow.svg'); }
+  .ic-folder{ width:13px; height:13px; -webkit-mask-image:url('icons/folder.svg'); mask-image:url('icons/folder.svg'); }
+  .ic-wave{ width:16px; height:16px; -webkit-mask-image:url('icons/wave.svg'); mask-image:url('icons/wave.svg'); }
+  .ic-star{ width:13px; height:13px; -webkit-mask-image:url('icons/star.svg'); mask-image:url('icons/star.svg'); }
+  .ic-list-view{ width:14px; height:14px; -webkit-mask-image:url('icons/list-view.svg'); mask-image:url('icons/list-view.svg'); }
+  .ic-large-view{ width:14px; height:14px; -webkit-mask-image:url('icons/large-view.svg'); mask-image:url('icons/large-view.svg'); }
+  .ic-small-view{ width:14px; height:14px; -webkit-mask-image:url('icons/small-view.svg'); mask-image:url('icons/small-view.svg'); }
+  .ic-add{ width:12px; height:12px; -webkit-mask-image:url('icons/add.svg'); mask-image:url('icons/add.svg'); }
+  .ic-refresh{ width:12px; height:12px; -webkit-mask-image:url('icons/refresh.svg'); mask-image:url('icons/refresh.svg'); }
+  .track.noPreview .tname{ opacity:.5; }
+  .ic-folder-open{ width:13px; height:13px; -webkit-mask-image:url('icons/folder-open.svg'); mask-image:url('icons/folder-open.svg'); }
+
+  .ic-volume{ width:16px; height:16px; -webkit-mask-image:url('icons/volume.svg'); mask-image:url('icons/volume.svg'); }
+  .ic-mute{ width:16px; height:16px; -webkit-mask-image:url('icons/mute.svg'); mask-image:url('icons/mute.svg'); }
+  
+  .content-grid.small .ic-wave{ width:16px; height:10px; }
+  .content-grid.small .tname{ display:none; }
+  .content-grid.small .star{ font-size:8px; }
+  .content-grid.large .ic-wave{ width:56px; height:28px; }
+
+  ::-webkit-scrollbar{ width:7px; height:7px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--accent-2); border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover{ background:#2a9dcf; }
+
+  #header{ display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-bottom:2px solid var(--border); flex-shrink:0; }
+  #brand{ display:flex; align-items:center; gap:6px; }
+  #brand .name{ font-weight:600; font-size:20px; color:var(--text); }
+  #brand .name .accentPart{ color:var(--accent-1); }
+  #brand .version{ font-size:10px; color:var(--muted); border:1px solid #383838; border-radius:8px; padding:1px 6px; }
+
+  #tabs{ display:flex; flex-wrap:wrap; gap:4px; padding:6px 10px; border-bottom:2px solid var(--border); flex-shrink:0; }
+  .tabBtn{ display:inline-flex; align-items:center; gap:5px; background:var(--panel); border:1px solid #383838; color:var(--muted); border-radius:14px; padding:5px 12px; cursor:pointer; font-size:11.5px; font-weight:500; }
+  .ic-pack{ width:12px; height:12px; -webkit-mask-image:url('icons/pack.svg'); mask-image:url('icons/pack.svg'); }
+  .ic-pack-lg{ width:40px; height:40px; -webkit-mask-image:url('icons/pack.svg'); mask-image:url('icons/pack.svg'); }
+  .ic-download{ width:12px; height:12px; -webkit-mask-image:url('icons/download.svg'); mask-image:url('icons/download.svg'); }
+  .ic-heart{ width:12px; height:12px; -webkit-mask-image:url('icons/heart.svg'); mask-image:url('icons/heart.svg'); }
+  .ic-search{ width:12px; height:12px; -webkit-mask-image:url('icons/search.svg'); mask-image:url('icons/search.svg'); }
+  #packScreen{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; text-align:center; color:var(--muted); }
+  #packScreen .icon-mask{ background-color:#4a4a4a; }
+  #packScreen .packTitle{ font-size:13px; color:var(--text); }
+  #packInstallBtn{ display:inline-flex; align-items:center; gap:6px; background:var(--accent-grad); color:#fff; border:none; border-radius:16px; padding:8px 16px; cursor:pointer; font-size:12px; font-weight:500; }
+  #packInstallBtn .icon-mask{ background-color:#fff; }
+  #packInstallBtn:hover{ opacity:.92; }
+  #packInstallBtn:disabled{ opacity:.5; cursor:default; }
+  #packStatus{ font-size:11px; min-height:14px; }
+  #packStatus.success{ color:#3ecf6e; }
+  #packStatus.error{ color:#e05656; }
+  .tabBtn.active{ background:var(--accent-grad); color:#fff; border-color:transparent; box-shadow:0 0 4px 1px rgba(30,159,214,.55); }
+
+  #body{ flex:1; display:flex; min-height:0; }
+  #sidebar{ width:170px; flex-shrink:0; display:flex; flex-direction:column; min-height:0; }
+  #sidebarResizer{
+    width:6px; flex-shrink:0; cursor:col-resize; position:relative;
+    background:var(--border);
+  }
+  #sidebarResizer:hover, #sidebarResizer.dragging{ background:var(--accent-1); }
+  #sidebarResizer::after{
+    content:""; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:3px; height:32px; border-radius:3px;
+    background:var(--muted);
+  }
+  #sidebarResizer:hover::after, #sidebarResizer.dragging::after{ background:#fff; }
+  #libHeader{ display:flex; align-items:center; justify-content:space-between; padding:8px 8px 4px 8px; font-size:10px; color:var(--muted); letter-spacing:.5px; flex-shrink:0; }
+  #addLibBtn, #refreshBtn{ background:none; border:none; color:var(--muted); cursor:pointer; padding:2px 4px; border-radius:3px; }
+  #addLibBtn:hover, #refreshBtn:hover{ background:var(--hover); color:var(--text); }
+  #libHeader .btns{ display:flex; align-items:center; gap:2px; }
+  #tree{ flex:1; overflow-y:auto; padding:2px 4px 8px 4px; }
+  .node{ display:flex; align-items:center; gap:7px; padding:7px 6px; border-radius:6px; cursor:pointer; white-space:nowrap; }
+  .node:hover{ background:var(--hover); }
+  .node.selected{ background:var(--accent-grad); color:#fff; }
+  .node.selected .icon, .node.selected .arrow{ color:#fff; }
+  .node.selected{ box-shadow:0 0 4px 1px rgba(30,159,214,.55); }
+  .node.root.drag-over{ box-shadow:inset 0 2px 0 var(--accent-1); }
+  .node .arrow{ width:12px; height:12px; flex-shrink:0; color:var(--muted); transition:transform .12s ease; display:flex; align-items:center; justify-content:center; }
+  .node .arrow.open{ transform:rotate(90deg); }
+  .node .arrow.empty{ visibility:hidden; }
+  .node .icon{ flex-shrink:0; color:var(--muted); }
+  .node .label{ overflow:hidden; text-overflow:ellipsis; font-size:11.5px; line-height:1; position:relative; top:-1px; }
+  .node .count{ margin-left:auto; padding-left:6px; font-size:10.5px; font-weight:600; color:var(--accent-1); flex-shrink:0; }
+  .node.selected .count{ color:#fff; }
+  .children{ padding-left:14px; }
+
+  #main{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  #searchBar{ display:flex; padding:8px; border-bottom:2px solid var(--border); flex-shrink:0; }
+  #searchInputWrap{ position:relative; flex:1; display:flex; align-items:center; }
+  #searchInputWrap .icon-mask{ position:absolute; left:12px; color:var(--muted); pointer-events:none; }
+  #searchBar input{ flex:1; background:var(--panel); border:1px solid #383838; border-radius:16px; padding:6px 12px 6px 30px; color:var(--text); font-size:12px; font-weight:500; }
+  #searchBar input::placeholder{ color:var(--muted); }
+  #crumb{ padding:6px 10px 0 10px; font-size:10.5px; color:var(--muted); flex-shrink:0; }
+  #content{ flex:1; overflow-y:auto; padding:8px; }
+  #emptyMsg{ padding:10px 6px; text-align:center; color:var(--muted); line-height:1.4; font-weight:500; font-size:10.5px; }
+
+  .content-list .track{ display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:8px; cursor:pointer; }
+  .content-list .track:hover{ background:var(--hover); }
+  .content-list .track.playing{ background:var(--accent-grad); }
+  .content-list .track.playing .tname, .content-list .track.playing .ic-wave{ color:#fff; }
+  .content-list .track.playing{ box-shadow:0 0 4px 1px rgba(30,159,214,.55); }
+
+  .content-grid{ display:grid; gap:10px; align-content:start; }
+  .content-grid.large{ grid-template-columns:repeat(auto-fill, 96px); justify-content:start; }
+  .content-grid.small{ grid-template-columns:repeat(auto-fill, 36px); justify-content:start; }
+  .content-grid.small .track{ padding:3px 1px; gap:1px; }
+  .content-grid .track{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 4px; border:1px solid #383838; border-radius:10px; cursor:pointer; text-align:center; }
+  .content-grid .track:hover{ background:var(--hover); }
+  .content-grid .track.playing{ background:var(--accent-grad); border-color:transparent; }
+  .content-grid .track.playing .tname, .content-grid .track.playing .ic-wave{ color:#fff; }
+  .content-grid .track.playing{ box-shadow:0 0 4px 1px rgba(30,159,214,.55); }
+
+  .track .ic-wave{ color:var(--muted); }
+  .track .tname{ font-size:11px; font-weight:500; direction:ltr; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:100%; }
+  .content-list .track .tname{ flex:1; text-align:left; }
+  .track .star{ flex-shrink:0; color:#5a5a5a; font-size:13px; padding:2px; cursor:pointer; }
+  .track .star.fav{ color:#f0b400; }
+  .star-wrap.fav{ display:inline-flex; box-shadow:0 0 6px 2px rgba(240,180,0,.9); border-radius:50%; }
+
+  #footer{ display:flex; align-items:center; justify-content:space-between; padding:6px 10px; border-top:2px solid var(--border); flex-shrink:0; }
+  #volWrap{ display:flex; align-items:center; gap:6px; color:var(--muted); }
+  #volWrap input{
+    -webkit-appearance:none; appearance:none;
+    width:70px; height:4px; border-radius:4px;
+    outline:none; border:none; box-shadow:none;
+    cursor:pointer;
+  }
+  #volWrap input::-webkit-slider-runnable-track{ height:4px; border-radius:4px; background:transparent; border:none; outline:none; box-shadow:none; }
+  #volWrap input::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:10px; height:10px; border-radius:50%;
+    background:var(--accent-1);
+    border:none; outline:none; box-shadow:none;
+    margin-top:-3px;
+  }
+  #viewToggle{ display:flex; gap:2px; }
+  .viewBtn{ background:none; border:none; color:var(--muted); padding:4px; border-radius:6px; cursor:pointer; display:flex; }
+  .viewBtn:hover{ background:var(--hover); color:var(--text); }
+  .viewBtn.active{ background:var(--accent-grad); color:#fff; }
+
+
+  .ctxMenu{ position:fixed; display:none; z-index:100; background:#2b2b2b; border:1px solid #383838; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.4); padding:4px; min-width:120px; }
+  .ctxMenu.open{ display:block; }
+  .ctxItem{ padding:6px 10px; font-size:11.5px; font-weight:500; border-radius:6px; cursor:pointer; color:#c0392b; }
+  .ctxItem:hover{ background:var(--hover); }
+</style>
+</head>
+<body>
+
+  <div id="header">
+    <div id="brand">
+      <span id="brandLogo"></span>
+      <span class="name">Halal<span class="accentPart">FX</span></span>
+      <span class="version">v2.0.0</span>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tabBtn active" data-tab="folder"><span class="icon-mask ic-folder"></span>Folder</button>
+    <button class="tabBtn" data-tab="favorites"><span class="icon-mask ic-heart"></span>Favorites</button>
+    <button class="tabBtn" data-tab="pack"><span class="icon-mask ic-pack"></span>Pack</button>
+    <button class="tabBtn" data-tab="search"><span class="icon-mask ic-search"></span>Search</button>
+  </div>
+
+  <div id="body">
+    <div id="sidebar">
+      <div id="libHeader">
+        <span>LIBRARIES</span>
+        <span class="btns">
+          <button id="refreshBtn" title="Refresh libraries"><span class="icon-mask ic-refresh"></span></button>
+          <button id="addLibBtn" title="Add Library"><span class="icon-mask ic-add"></span></button>
+        </span>
+      </div>
+      <div id="tree"></div>
+    </div>
+
+    <div id="sidebarResizer" title="Drag to resize"></div>
+
+    <div id="main">
+      <div id="searchBar" style="display:none;">
+        <div id="searchInputWrap">
+          <span class="icon-mask ic-search"></span>
+          <input id="searchInput" type="text" placeholder="Search in category">
+        </div>
+      </div>
+      <div id="crumb"></div>
+      <div id="content"></div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div id="volWrap">
+      <span id="volIcon" class="icon-mask ic-volume" style="cursor:pointer;"></span>
+      <input id="volSlider" type="range" min="0" max="1" step="0.01" value="1">
+    </div>
+    <div id="viewToggle">
+      <button class="viewBtn" data-view="list" title="List"></button>
+      <button class="viewBtn" data-view="large" title="Large icons"></button>
+      <button class="viewBtn" data-view="small" title="Small icons"></button>
+    </div>
+  </div>
+
+  <div id="ctxMenu" class="ctxMenu">
+    <div class="ctxItem" id="ctxDeleteItem">Delete</div>
+  </div>
+
+  <script src="CSInterface.js"></script>
+  <script src="jszip.min.js"></script>
+  <script src="common.js"></script>
+  <script src="main.js"></script>
+  <script src="cut.js"></script>
+  <script src="gaps.js"></script>
+  <script src="captions.js"></script>
+  <script src="fillers.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>
